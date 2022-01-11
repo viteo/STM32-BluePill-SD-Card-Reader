@@ -1,17 +1,33 @@
-STM32 BluePill Template project
+STM32 BluePill SD Card Reader
 ===
-STM32 [BluePill](https://stm32-base.org/boards/STM32F103C8T6-Blue-Pill.html) template project for [STM32CubeIDE](https://www.st.com/en/development-tools/stm32cubeide.html) with Standard Peripherial Library ([SPL](https://www.st.com/en/embedded-software/stm32-standard-peripheral-libraries.html)) v3.6.1.
+Most MM/SD Cards support connection via SPI [(How to Use MMC/SDC by ChaN)](http://elm-chan.org/docs/mmc/mmc_e.html). In this way it is possible to connect a SD Card to BluePill and use it as an external memory storage, but also present it via Mass Storage Class as an USB Card Reader. Bear in mind that the read/write speed is relatively very low.
 
-How to use
+
+Using on STM32 BluePill
 ---
-Install STM32CubeIDE
+In STM32CubeIDE
 
     File -> Open Project from File System... -> Directory -> Finish
 
-The project will appear in your Project Explorer. Rename it.
+Connect MMC/SDC to SPI pins
 
-    Right Click -> Rename... -> Update references ✓ -> OK
+       |¯¯¯¯¯¯¯¯¯\_/¯¯¯¯¯\                  +--------------+
+       |                  \                 |              |
+       |                CS |-2-----------18-| PB0          |
+       |              MOSI |-3-----------17-| PA7          |
+       |               VCC |-4--------+3.3V-| 3.3V out     |
+       |              SCLK |-5-----------15-| PA5          |
+       |               GND |-6----------GND-| GND          |
+       |              MISO |-7-----------16-| PA6          |
+       |___________________|                |              |
+                   SD Card                  |     USB      |
+                                            +--------------+
+                                             BluePill
 
-The .ioc file
----
-The .ioc file added for reference where you might describe pinout, peripherials, timings, interrupts, etc. But just for reference. Do not use 'Generate Code' button. If you want to hide 'Code-generation needed' notification, delete ```isbadioc=true``` string from file or change it to false.
+- [fatfs](http://elm-chan.org/fsw/ff/00index_e.html) lib by ChaN: R/W access to MMC from the BluePill side
+- mmc lib by Internet: low level access to MMC in SPI Mode
+- [usb-fs](https://www.st.com/en/embedded-software/stsw-stm32121.html) lib with MSC: R/W access to MMC from PC side via BluePill's USB
+
+
+### The .ioc file
+The .ioc file is just for reference. Do not use 'Generate Code'.
