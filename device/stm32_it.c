@@ -50,6 +50,10 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32_it.h"
+#include "stm32f10x.h"
+#include "usb_istr.h"
+#include "usb_int.h"
+#include "mmc.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -175,6 +179,7 @@ void PendSV_Handler(void)
 *******************************************************************************/
 void SysTick_Handler(void)
 {
+	SD_SysTickTimers();
 }
 
 /******************************************************************************/
@@ -184,15 +189,38 @@ void SysTick_Handler(void)
 /*  file (startup_stm32xxx.s).                                            */
 /******************************************************************************/
 
+/******************************************************************************/
+/*            STM32 Peripherals Interrupt Handlers                        */
+/******************************************************************************/
+
 /*******************************************************************************
-* Function Name  : PPP_IRQHandler
-* Description    : This function handles PPP interrupt request.
+* Function Name  : USB_HP_CAN1_TX_IRQHandler
+* Description    : This function handles USB High Priority or CAN TX interrupts requests
+*                  requests.
 * Input          : None
 * Output         : None
 * Return         : None
 *******************************************************************************/
-/*void PPP_IRQHandler(void)
+void USB_HP_CAN_TX_IRQHandler(void)
 {
-}*/
+  CTR_HP();
+}
+
+/*******************************************************************************
+* Function Name  : USB_IRQHandler
+* Description    : This function handles USB Low Priority interrupts
+*                  requests.
+* Input          : None
+* Output         : None
+* Return         : None
+*******************************************************************************/
+#if defined(STM32L1XX_MD) || defined(STM32L1XX_HD)|| defined(STM32L1XX_MD_PLUS) || defined(STM32F37X)
+void USB_LP_IRQHandler(void)
+#else
+void USB_LP_CAN_RX0_IRQHandler(void)
+#endif
+{
+  USB_Istr();
+}
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
